@@ -29,50 +29,73 @@
   function playIfAllowed() {
     if (mutedByUser) {
       audio.pause();
-      return Promise.resolve();
+      return Promise.resolve(false);
     }
-    return audio.play().catch(function () {});
+    return audio
+      .play()
+      .then(function () {
+        return true;
+      })
+      .catch(function () {
+        return false;
+      });
   }
 
   function removeGestureListeners() {
     window.removeEventListener("scroll", onScroll);
     document.removeEventListener("wheel", onWheel, true);
     document.removeEventListener("pointerdown", onPointerDown, true);
+    document.removeEventListener("touchstart", onTouchStart, true);
     document.removeEventListener("click", onClick, true);
     document.removeEventListener("keydown", onKeyDown, true);
   }
 
-  function beginMusic() {
+  function commitStartedIfPlaying() {
+    if (mutedByUser || !audio.paused) {
+      started = true;
+      removeGestureListeners();
+    }
+    updateUi();
+  }
+
+  function tryStartAudio() {
     if (mutedByUser || started) return;
-    started = true;
-    removeGestureListeners();
-    playIfAllowed().then(function () {
+    playIfAllowed().then(function (ok) {
+      if (ok && !audio.paused) {
+        started = true;
+        removeGestureListeners();
+      }
       updateUi();
     });
   }
 
   function onScroll() {
-    beginMusic();
+    tryStartAudio();
   }
 
   function onWheel(e) {
     if (Math.abs(e.deltaY) < 1) return;
-    beginMusic();
+    tryStartAudio();
   }
 
   function onPointerDown(e) {
     if (btn.contains(e.target)) return;
-    beginMusic();
+    tryStartAudio();
+  }
+
+  function onTouchStart(e) {
+    if (btn.contains(e.target)) return;
+    tryStartAudio();
   }
 
   function onClick(e) {
     if (btn.contains(e.target)) return;
-    beginMusic();
+    tryStartAudio();
   }
 
   function onKeyDown(e) {
     if (e.key === "Tab" || e.key === "Escape") return;
-    beginMusic();
+    tryStartAudio();
   }
 
   updateUi();
@@ -83,6 +106,7 @@
     window.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("wheel", onWheel, { capture: true, passive: true });
     document.addEventListener("pointerdown", onPointerDown, { capture: true, passive: true });
+    document.addEventListener("touchstart", onTouchStart, { capture: true, passive: true });
     document.addEventListener("click", onClick, { capture: true, passive: true });
     document.addEventListener("keydown", onKeyDown, { capture: true, passive: true });
   }
@@ -93,18 +117,22 @@
     if (mutedByUser) {
       mutedByUser = false;
       persist();
-      started = true;
-      removeGestureListeners();
-      playIfAllowed().then(function () {
+      playIfAllowed().then(function (ok) {
+        if (ok && !audio.paused) {
+          started = true;
+          removeGestureListeners();
+        }
         updateUi();
       });
       return;
     }
 
     if (audio.paused) {
-      started = true;
-      removeGestureListeners();
-      playIfAllowed().then(function () {
+      playIfAllowed().then(function (ok) {
+        if (ok && !audio.paused) {
+          started = true;
+          removeGestureListeners();
+        }
         updateUi();
       });
       return;
