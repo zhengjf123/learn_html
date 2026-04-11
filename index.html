@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>learn_html · 在线预览</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #0f1220;
+        --card: rgba(255, 255, 255, 0.06);
+        --border: rgba(255, 255, 255, 0.12);
+        --text: #e8eaf2;
+        --muted: #9aa3b5;
+        --accent: #7c9cff;
+        --accent-2: #5de4c7;
+      }
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #f4f6fb;
+          --card: #ffffff;
+          --border: #e1e6ef;
+          --text: #1a1f2e;
+          --muted: #5c6578;
+          --accent: #3d5afe;
+          --accent-2: #009688;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          "PingFang SC", "Microsoft YaHei", sans-serif;
+        color: var(--text);
+        background: radial-gradient(
+            1200px 600px at 10% -10%,
+            rgba(124, 156, 255, 0.35),
+            transparent 55%
+          ),
+          radial-gradient(
+            900px 500px at 90% 0%,
+            rgba(93, 228, 199, 0.28),
+            transparent 50%
+          ),
+          var(--bg);
+        display: grid;
+        place-items: center;
+        padding: 2rem 1.25rem;
+      }
+      main {
+        width: min(640px, 100%);
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: clamp(1.5rem, 4vw, 2.25rem);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
+      }
+      h1 {
+        margin: 0 0 0.5rem;
+        font-size: clamp(1.35rem, 3vw, 1.75rem);
+        letter-spacing: -0.02em;
+      }
+      p {
+        margin: 0 0 1rem;
+        line-height: 1.65;
+        color: var(--muted);
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1.25rem;
+      }
+      a.button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.65rem 1rem;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        border: 1px solid var(--border);
+        color: var(--text);
+        background: rgba(124, 156, 255, 0.12);
+        transition: transform 0.15s ease, background 0.15s ease;
+      }
+      a.button:hover {
+        transform: translateY(-1px);
+        background: rgba(124, 156, 255, 0.2);
+      }
+      a.button.secondary {
+        background: transparent;
+      }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.9em;
+        padding: 0.15em 0.4em;
+        border-radius: 6px;
+        background: rgba(124, 156, 255, 0.12);
+        border: 1px solid var(--border);
+      }
+      .hint {
+        margin-top: 1.25rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--border);
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>页面已就绪</h1>
+      <p>
+        这是仓库根目录的 <code>index.html</code>。把更多页面放进同一仓库并推送后，访问下方在线地址即可分享效果。
+      </p>
+      <p>
+        若你已在 GitHub 启用 Pages（源选 <strong>GitHub Actions</strong>），公开访问地址一般为：
+      </p>
+      <p><code>https://zhengjf123.github.io/learn_html/</code></p>
+      <div class="row">
+        <a
+          class="button"
+          href="https://zhengjf123.github.io/learn_html/"
+          rel="noopener noreferrer"
+          >打开 Pages 预览</a
+        >
+        <a
+          class="button secondary"
+          href="https://github.com/zhengjf123/learn_html"
+          rel="noopener noreferrer"
+          >查看仓库</a
+        >
+      </div>
+      <p class="hint">
+        首次部署：GitHub 仓库 → <strong>Settings</strong> → <strong>Pages</strong> → Build and
+        deployment 的 <strong>Source</strong> 选择 <strong>GitHub Actions</strong>，等待工作流跑完后即可访问。
+      </p>
+    </main>
+  </body>
+</html>
