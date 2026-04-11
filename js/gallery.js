@@ -22,6 +22,7 @@
   var playing = true;
   var autoMs = 6000;
   var swipeX = null;
+  var fitFrameGeneration = 0;
 
   function clearAuto() {
     if (autoTimer) {
@@ -77,6 +78,27 @@
     frameEl.style.height = dh + "px";
   }
 
+  function scheduleFitFrameAfterTransition() {
+    var gen = ++fitFrameGeneration;
+    var layer = layers[visibleLayer];
+    var done = function () {
+      if (gen !== fitFrameGeneration) return;
+      fitFrameToImage(imgs[visibleLayer]);
+    };
+    var fallback = setTimeout(function () {
+      layer.removeEventListener("transitionend", onEnd);
+      done();
+    }, 1400);
+    function onEnd(ev) {
+      if (ev.target !== layer || ev.propertyName !== "opacity") return;
+      layer.removeEventListener("transitionend", onEnd);
+      clearTimeout(fallback);
+      if (gen !== fitFrameGeneration) return;
+      done();
+    }
+    layer.addEventListener("transitionend", onEnd);
+  }
+
   var resizeTimer = null;
   window.addEventListener("resize", function () {
     clearTimeout(resizeTimer);
@@ -107,7 +129,7 @@
       idx = newIdx;
       captionEl.textContent = item.caption || "";
       updateFilmstrip();
-      fitFrameToImage(imgs[visibleLayer]);
+      scheduleFitFrameAfterTransition();
       restartProgress();
       scheduleAuto();
     }

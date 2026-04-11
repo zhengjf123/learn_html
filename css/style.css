@@ -669,6 +669,7 @@ h1 {
   max-width: min(92vw, 920px);
   min-width: 200px;
   min-height: 160px;
+  isolation: isolate;
 }
 
 .slide-frame:fullscreen {
@@ -691,6 +692,9 @@ h1 {
   transition: opacity 1.2s cubic-bezier(0.45, 0, 0.15, 1);
   z-index: 0;
   background: #0a0508;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .slide-layer.is-visible {
@@ -731,6 +735,14 @@ h1 {
   }
   50% {
     background-position: 100% 50%;
+  }
+}
+
+@media (hover: none) {
+  .slide-shine {
+    animation: none;
+    mix-blend-mode: normal;
+    opacity: 0.12;
   }
 }
 
