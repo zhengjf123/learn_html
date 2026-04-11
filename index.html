@@ -30,34 +30,9 @@
       <div class="desktop-cinema__letterbox desktop-cinema__letterbox--bottom"></div>
     </div>
 
-    <audio id="bgm-audio" autoplay loop playsinline preload="auto">
+    <audio id="bgm-audio" loop playsinline preload="auto">
       <source src="audio/bgm.mp3" type="audio/mpeg" />
     </audio>
-    <script>
-      (function () {
-        try {
-          if (localStorage.getItem("learn_html_bgm_muted") === "1") return;
-        } catch (e) {}
-        var a = document.getElementById("bgm-audio");
-        if (!a) return;
-        function tryPlay() {
-          var p = a.play();
-          if (p && typeof p.catch === "function") p.catch(function () {});
-        }
-        tryPlay();
-        ["loadedmetadata", "loadeddata", "canplay", "canplaythrough"].forEach(function (ev) {
-          a.addEventListener(ev, tryPlay, { once: true });
-        });
-        var n = 0;
-        var t = setInterval(function () {
-          if (n++ > 40 || !a.paused) {
-            clearInterval(t);
-            return;
-          }
-          tryPlay();
-        }, 120);
-      })();
-    </script>
 
     <button
       type="button"

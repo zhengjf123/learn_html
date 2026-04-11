@@ -11,6 +11,8 @@
     mutedByUser = localStorage.getItem(STORAGE_KEY) === "1";
   } catch (e) {}
 
+  var started = false;
+
   function persist() {
     try {
       localStorage.setItem(STORAGE_KEY, mutedByUser ? "1" : "0");
@@ -32,34 +34,58 @@
     return audio.play().catch(function () {});
   }
 
-  function tryUnlock(e) {
-    if (mutedByUser) return;
-    if (e && e.target && btn.contains(e.target)) return;
-    if (!audio.paused) return;
-    playIfAllowed();
+  function removeGestureListeners() {
+    window.removeEventListener("scroll", onScroll);
+    document.removeEventListener("wheel", onWheel, true);
+    document.removeEventListener("pointerdown", onPointerDown, true);
+    document.removeEventListener("click", onClick, true);
+    document.removeEventListener("keydown", onKeyDown, true);
+  }
+
+  function beginMusic() {
+    if (mutedByUser || started) return;
+    started = true;
+    removeGestureListeners();
+    playIfAllowed().then(function () {
+      updateUi();
+    });
+  }
+
+  function onScroll() {
+    beginMusic();
+  }
+
+  function onWheel(e) {
+    if (Math.abs(e.deltaY) < 1) return;
+    beginMusic();
+  }
+
+  function onPointerDown(e) {
+    if (btn.contains(e.target)) return;
+    beginMusic();
+  }
+
+  function onClick(e) {
+    if (btn.contains(e.target)) return;
+    beginMusic();
+  }
+
+  function onKeyDown(e) {
+    if (e.key === "Tab" || e.key === "Escape") return;
+    beginMusic();
   }
 
   updateUi();
-  if (!mutedByUser) {
-    playIfAllowed();
+  if (mutedByUser) {
+    audio.pause();
   } else {
     audio.pause();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("wheel", onWheel, { capture: true, passive: true });
+    document.addEventListener("pointerdown", onPointerDown, { capture: true, passive: true });
+    document.addEventListener("click", onClick, { capture: true, passive: true });
+    document.addEventListener("keydown", onKeyDown, { capture: true, passive: true });
   }
-
-  window.addEventListener("pageshow", function (ev) {
-    if (!mutedByUser && (audio.paused || ev.persisted)) playIfAllowed();
-  });
-  document.addEventListener("visibilitychange", function () {
-    if (!document.hidden && !mutedByUser && audio.paused) playIfAllowed();
-  });
-  window.addEventListener("focus", function () {
-    if (!mutedByUser && audio.paused) playIfAllowed();
-  });
-
-  document.addEventListener("pointerdown", tryUnlock, { capture: true, passive: true });
-  document.addEventListener("click", tryUnlock, { capture: true, passive: true });
-  document.addEventListener("touchstart", tryUnlock, { capture: true, passive: true });
-  document.addEventListener("keydown", tryUnlock, { capture: true, passive: true });
 
   btn.addEventListener("click", function (e) {
     e.stopPropagation();
@@ -67,6 +93,8 @@
     if (mutedByUser) {
       mutedByUser = false;
       persist();
+      started = true;
+      removeGestureListeners();
       playIfAllowed().then(function () {
         updateUi();
       });
@@ -74,14 +102,11 @@
     }
 
     if (audio.paused) {
-      playIfAllowed().then(
-        function () {
-          updateUi();
-        },
-        function () {
-          updateUi();
-        }
-      );
+      started = true;
+      removeGestureListeners();
+      playIfAllowed().then(function () {
+        updateUi();
+      });
       return;
     }
 
