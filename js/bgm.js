@@ -4,7 +4,7 @@
   if (!audio || !btn) return;
 
   var mq = window.matchMedia("(min-width: 900px) and (pointer: fine)");
-  audio.volume = 0.32;
+  audio.volume = 0.38;
 
   function setUi(playing) {
     btn.setAttribute("aria-pressed", playing ? "true" : "false");
