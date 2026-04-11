@@ -27,7 +27,7 @@
   function playIfAllowed() {
     if (mutedByUser) {
       audio.pause();
-      return;
+      return Promise.resolve();
     }
     return audio.play().catch(function () {});
   }
@@ -46,19 +46,38 @@
     audio.pause();
   }
 
+  document.addEventListener("pointerdown", tryUnlock, { capture: true, passive: true });
   document.addEventListener("click", tryUnlock, { capture: true, passive: true });
   document.addEventListener("touchstart", tryUnlock, { capture: true, passive: true });
   document.addEventListener("keydown", tryUnlock, { capture: true, passive: true });
 
   btn.addEventListener("click", function (e) {
     e.stopPropagation();
-    mutedByUser = !mutedByUser;
-    persist();
+
     if (mutedByUser) {
-      audio.pause();
-    } else {
-      playIfAllowed();
+      mutedByUser = false;
+      persist();
+      playIfAllowed().then(function () {
+        updateUi();
+      });
+      return;
     }
+
+    if (audio.paused) {
+      playIfAllowed().then(
+        function () {
+          updateUi();
+        },
+        function () {
+          updateUi();
+        }
+      );
+      return;
+    }
+
+    mutedByUser = true;
+    persist();
+    audio.pause();
     updateUi();
   });
 })();
