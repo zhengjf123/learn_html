@@ -9,7 +9,7 @@
   2. 在 "photos" 数组里按顺序添加条目，每张图一条。例如：
 
 {
-  "autoAdvanceSeconds": 6,
+  "autoAdvanceSeconds": 2,
   "photos": [
     { "file": "旅行_01.jpg", "caption": "那年夏天的风" },
     { "file": "生日合影.png", "caption": "" }
