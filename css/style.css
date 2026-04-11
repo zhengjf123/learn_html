@@ -573,6 +573,7 @@ h1 {
   opacity: 0;
   transition: opacity 1.2s cubic-bezier(0.45, 0, 0.15, 1);
   z-index: 0;
+  background: #0a0508;
 }
 
 .slide-layer.is-visible {
@@ -583,47 +584,9 @@ h1 {
 .slide-layer img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center center;
   display: block;
-  transform-origin: center center;
-  will-change: transform;
-}
-
-.slide-layer img.kb-1 {
-  animation: kb1 11s ease-in-out infinite alternate;
-}
-.slide-layer img.kb-2 {
-  animation: kb2 12s ease-in-out infinite alternate;
-}
-.slide-layer img.kb-3 {
-  animation: kb3 10s ease-in-out infinite alternate;
-}
-
-@keyframes kb1 {
-  0% {
-    transform: scale(1) translate(0, 0);
-  }
-  100% {
-    transform: scale(1.14) translate(-2.5%, -1.5%);
-  }
-}
-
-@keyframes kb2 {
-  0% {
-    transform: scale(1.08) translate(1%, 0);
-  }
-  100% {
-    transform: scale(1.18) translate(-2%, 1%);
-  }
-}
-
-@keyframes kb3 {
-  0% {
-    transform: scale(1.05) translate(-1%, 0.5%);
-  }
-  100% {
-    transform: scale(1.12) translate(2%, -2%);
-  }
 }
 
 .slide-shine {
@@ -814,8 +777,7 @@ h1 {
   .balloon,
   .cake,
   .sparkles span,
-  .slide-shine,
-  .slide-layer img {
+  .slide-shine {
     animation: none !important;
   }
   .eyebrow,

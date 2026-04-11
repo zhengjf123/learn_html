@@ -1,5 +1,4 @@
 (function () {
-  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var slideshow = document.getElementById("slideshow");
   var emptyEl = document.getElementById("gallery-empty");
   if (!slideshow || !emptyEl) return;
@@ -55,18 +54,6 @@
     scheduleAuto();
   }
 
-  function kbClass() {
-    return "kb-" + (1 + ((Math.random() * 3) | 0));
-  }
-
-  function applyKb(img) {
-    img.classList.remove("kb-1", "kb-2", "kb-3");
-    if (!reduce) {
-      void img.offsetWidth;
-      img.classList.add(kbClass());
-    }
-  }
-
   function updateFilmstrip() {
     var thumbs = filmstrip.querySelectorAll(".filmstrip-thumb");
     for (var i = 0; i < thumbs.length; i++) {
@@ -88,7 +75,6 @@
       idx = newIdx;
       captionEl.textContent = item.caption || "";
       updateFilmstrip();
-      applyKb(imgs[visibleLayer]);
       restartProgress();
       scheduleAuto();
     }
@@ -162,7 +148,6 @@
       imgs[0].onload = null;
       imgs[0].onerror = null;
       captionEl.textContent = list[0].caption || "";
-      applyKb(imgs[0]);
       restartProgress();
       scheduleAuto();
     };
@@ -182,7 +167,6 @@
     if (imgs[0].complete && imgs[0].naturalWidth > 0) {
       imgs[0].onload = null;
       captionEl.textContent = list[0].caption || "";
-      applyKb(imgs[0]);
       restartProgress();
       scheduleAuto();
     }
