@@ -46,6 +46,16 @@
     audio.pause();
   }
 
+  window.addEventListener("pageshow", function (ev) {
+    if (!mutedByUser && (audio.paused || ev.persisted)) playIfAllowed();
+  });
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden && !mutedByUser && audio.paused) playIfAllowed();
+  });
+  window.addEventListener("focus", function () {
+    if (!mutedByUser && audio.paused) playIfAllowed();
+  });
+
   document.addEventListener("pointerdown", tryUnlock, { capture: true, passive: true });
   document.addEventListener("click", tryUnlock, { capture: true, passive: true });
   document.addEventListener("touchstart", tryUnlock, { capture: true, passive: true });
