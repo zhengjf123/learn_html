@@ -12,6 +12,7 @@
   var btnPlay = slideshow.querySelector(".btn-play");
   var btnFs = slideshow.querySelector(".btn-fullscreen");
   var progressFill = slideshow.querySelector(".slide-progress-fill");
+  var frameEl = slideshow.querySelector(".slide-frame");
 
   var prefix = "photos/";
   var list = [];
@@ -61,6 +62,37 @@
     }
   }
 
+  function fitFrameToImage(img) {
+    if (!frameEl || !img || !img.naturalWidth || !img.naturalHeight) return;
+    if (document.fullscreenElement === frameEl) return;
+    var pad = 36;
+    var maxW = Math.min(920, (window.innerWidth || 800) - pad);
+    var maxH = Math.min(720, (window.innerHeight || 600) * 0.72);
+    var nw = img.naturalWidth;
+    var nh = img.naturalHeight;
+    var scale = Math.min(maxW / nw, maxH / nh);
+    var dw = Math.max(1, Math.round(nw * scale));
+    var dh = Math.max(1, Math.round(nh * scale));
+    frameEl.style.width = dw + "px";
+    frameEl.style.height = dh + "px";
+  }
+
+  var resizeTimer = null;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      var img = imgs[visibleLayer];
+      if (img && img.naturalWidth) fitFrameToImage(img);
+    }, 120);
+  });
+
+  document.addEventListener("fullscreenchange", function () {
+    if (!document.fullscreenElement && frameEl) {
+      var img = imgs[visibleLayer];
+      if (img && img.naturalWidth) fitFrameToImage(img);
+    }
+  });
+
   function swapTo(newIdx) {
     newIdx = ((newIdx % list.length) + list.length) % list.length;
     var nextLayer = 1 - visibleLayer;
@@ -75,6 +107,7 @@
       idx = newIdx;
       captionEl.textContent = item.caption || "";
       updateFilmstrip();
+      fitFrameToImage(imgs[visibleLayer]);
       restartProgress();
       scheduleAuto();
     }
@@ -148,6 +181,7 @@
       imgs[0].onload = null;
       imgs[0].onerror = null;
       captionEl.textContent = list[0].caption || "";
+      fitFrameToImage(imgs[0]);
       restartProgress();
       scheduleAuto();
     };
@@ -167,6 +201,7 @@
     if (imgs[0].complete && imgs[0].naturalWidth > 0) {
       imgs[0].onload = null;
       captionEl.textContent = list[0].caption || "";
+      fitFrameToImage(imgs[0]);
       restartProgress();
       scheduleAuto();
     }
@@ -208,19 +243,21 @@
     setPlayUi();
   });
 
-  if (btnFs) {
+  if (btnFs && frameEl) {
     btnFs.addEventListener("click", function () {
-      var frame = slideshow.querySelector(".slide-frame");
-      if (!frame) return;
       if (!document.fullscreenElement) {
-        frame.requestFullscreen().catch(function () {});
+        frameEl.style.width = "";
+        frameEl.style.height = "";
+        frameEl.requestFullscreen().catch(function () {
+          var im = imgs[visibleLayer];
+          if (im && im.naturalWidth) fitFrameToImage(im);
+        });
       } else {
         document.exitFullscreen();
       }
     });
   }
 
-  var frameEl = slideshow.querySelector(".slide-frame");
   if (frameEl) {
     frameEl.addEventListener(
       "touchstart",
