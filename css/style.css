@@ -40,6 +40,7 @@ body {
   justify-content: center;
   padding: clamp(1.25rem, 4vw, 2.5rem);
   position: relative;
+  z-index: 3;
 }
 
 .ambient {
@@ -124,12 +125,78 @@ body {
   position: fixed;
   inset: 0;
   pointer-events: none;
+  z-index: 2;
+}
+
+/* 桌面端：影院感遮罩（背景颗粒 + 前景上下黑边） */
+.desktop-cinema {
+  display: none;
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+}
+
+.desktop-cinema--back {
   z-index: 1;
+}
+
+.desktop-cinema--front {
+  z-index: 50;
+}
+
+@media (min-width: 900px) and (pointer: fine) {
+  .desktop-cinema {
+    display: block;
+  }
+}
+
+.desktop-cinema__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.09;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+.desktop-cinema__glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 90% 55% at 50% 85%,
+    rgba(255, 107, 157, 0.09) 0%,
+    transparent 55%
+  );
+}
+
+.desktop-cinema__vignette {
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 min(120px, 18vw) rgba(0, 0, 0, 0.55), inset 0 0 min(280px, 40vw) rgba(0, 0, 0, 0.35);
+}
+
+.desktop-cinema__letterbox {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: min(6.5vh, 56px);
+  background: #030203;
+  box-shadow: 0 0 48px rgba(0, 0, 0, 0.9);
+}
+
+.desktop-cinema__letterbox--top {
+  top: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.desktop-cinema__letterbox--bottom {
+  bottom: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow: 0 0 64px rgba(0, 0, 0, 0.95);
 }
 
 .wrap {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   width: min(540px, 100%);
   text-align: center;
   transform-style: preserve-3d;
@@ -138,7 +205,7 @@ body {
 
 .to-gallery {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   margin-top: 1.75rem;
   display: inline-flex;
   align-items: center;
@@ -499,7 +566,7 @@ h1 {
 /* —— 时光放映 —— */
 .gallery-section {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   padding: 2.5rem 1.25rem 4rem;
   background: linear-gradient(180deg, transparent 0%, rgba(26, 10, 20, 0.88) 8%, #120810 100%);
 }
@@ -511,11 +578,11 @@ h1 {
 
 .gallery-header {
   text-align: center;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.35rem;
 }
 
 .gallery-header h2 {
-  margin: 0 0 0.5rem;
+  margin: 0;
   font-size: clamp(1.5rem, 4vw, 1.85rem);
   font-weight: 800;
   letter-spacing: 0.2em;
@@ -525,13 +592,6 @@ h1 {
   background-clip: text;
   color: transparent;
   animation: titleFlow 9s ease-in-out infinite;
-}
-
-.gallery-header p {
-  margin: 0;
-  font-size: 0.92rem;
-  color: rgba(255, 255, 255, 0.45);
-  letter-spacing: 0.08em;
 }
 
 .slideshow {
@@ -676,6 +736,25 @@ h1 {
   font-size: 0.82rem;
   letter-spacing: 0.06em;
   background: rgba(196, 181, 253, 0.2);
+}
+
+.btn-bgm {
+  padding: 0.55rem 1rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-bgm.is-playing {
+  background: rgba(255, 107, 157, 0.28);
+  border-color: rgba(255, 182, 193, 0.45);
+}
+
+@media (max-width: 899px), (pointer: coarse) {
+  .btn-bgm {
+    display: none;
+  }
 }
 
 .slide-progress {

@@ -19,6 +19,20 @@
 
     <canvas id="fx" aria-hidden="true"></canvas>
 
+    <div class="desktop-cinema desktop-cinema--back" aria-hidden="true">
+      <div class="desktop-cinema__grain"></div>
+      <div class="desktop-cinema__glow"></div>
+      <div class="desktop-cinema__vignette"></div>
+    </div>
+    <div class="desktop-cinema desktop-cinema--front" aria-hidden="true">
+      <div class="desktop-cinema__letterbox desktop-cinema__letterbox--top"></div>
+      <div class="desktop-cinema__letterbox desktop-cinema__letterbox--bottom"></div>
+    </div>
+
+    <audio id="bgm-audio" loop playsinline preload="metadata">
+      <source src="audio/bgm.mp3" type="audio/mpeg" />
+    </audio>
+
     <header class="hero-screen">
       <div class="wrap" id="hero-parallax">
         <div class="balloons" aria-hidden="true">
@@ -51,7 +65,6 @@
       <div class="gallery-inner">
         <header class="gallery-header">
           <h2 id="gallery-title">时光放映</h2>
-          <p>把照片放进仓库的 photos 文件夹，并编辑 manifest.json · 详见 PHOTOS_USAGE.txt</p>
         </header>
 
         <div
@@ -77,6 +90,9 @@
             <button type="button" class="btn-play" aria-label="暂停自动放映">⏸</button>
             <button type="button" class="btn-next" aria-label="下一张">›</button>
             <button type="button" class="btn-fullscreen">全屏放映</button>
+            <button type="button" class="btn-bgm" id="btn-bgm" aria-pressed="false">
+              ♪ 氛围音乐
+            </button>
           </div>
           <div class="slide-progress" aria-hidden="true">
             <span class="slide-progress-fill"></span>
@@ -96,6 +112,7 @@
     </section>
 
     <script src="js/gallery.js"></script>
+    <script src="js/bgm.js"></script>
     <script src="js/fx.js"></script>
   </body>
 </html>
