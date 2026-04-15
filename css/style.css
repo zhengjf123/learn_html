@@ -128,59 +128,39 @@ body {
   z-index: 2;
 }
 
-/* 右上角背景音乐开关（全端可见） */
-.bgm-float {
-  position: fixed;
-  top: max(12px, env(safe-area-inset-top, 0px));
-  right: max(12px, env(safe-area-inset-right, 0px));
-  z-index: 60;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 50%;
-  background: rgba(8, 4, 10, 0.45);
-  color: rgba(255, 250, 252, 0.92);
+/* 贺卡内：背景音乐 */
+.bgm-play-btn {
+  margin-top: 1.35rem;
+  padding: 0.65rem 1.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 107, 157, 0.45);
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.18), rgba(196, 181, 253, 0.2));
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   cursor: pointer;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 107, 157, 0.12) inset;
-  transition: background 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 6px 20px rgba(255, 107, 157, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 
-.bgm-float:hover {
-  background: rgba(255, 107, 157, 0.22);
-  border-color: rgba(255, 182, 193, 0.45);
-  transform: scale(1.05);
+.bgm-play-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 107, 157, 0.65);
+  box-shadow: 0 10px 28px rgba(255, 107, 157, 0.22);
 }
 
-.bgm-float:focus-visible {
-  outline: 2px solid rgba(255, 182, 193, 0.85);
+.bgm-play-btn:focus-visible {
+  outline: 2px solid var(--rose);
   outline-offset: 3px;
 }
 
-.bgm-float__icon {
-  display: block;
-}
-
-.bgm-float__icon--off {
-  display: none;
-}
-
-.bgm-float.is-muted .bgm-float__icon--on {
-  display: none;
-}
-
-.bgm-float.is-muted .bgm-float__icon--off {
-  display: block;
-}
-
-.bgm-float.is-muted {
-  color: rgba(255, 255, 255, 0.45);
-  border-color: rgba(255, 255, 255, 0.12);
+.bgm-play-btn.is-playing {
+  border-color: rgba(196, 181, 253, 0.85);
+  background: linear-gradient(135deg, rgba(196, 181, 253, 0.35), rgba(255, 107, 157, 0.22));
+  box-shadow: 0 6px 24px rgba(196, 181, 253, 0.22);
 }
 
 /* 桌面端：影院感遮罩（背景颗粒 + 前景上下黑边） */
