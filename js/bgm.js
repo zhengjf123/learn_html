@@ -6,7 +6,6 @@
   var STORAGE_KEY = "learn_html_bgm_muted";
   var mutedByUser = false;
   var hasStarted = false;
-  var scrollTriggered = false;
 
   audio.volume = 0.38;
   audio.muted = false;
@@ -40,8 +39,6 @@
     document.removeEventListener("touchstart", onFirstGesture, true);
     document.removeEventListener("click", onFirstGesture, true);
     document.removeEventListener("keydown", onFirstKeydown, true);
-    document.removeEventListener("wheel", onWheelStart, true);
-    window.removeEventListener("scroll", onScrollStart, true);
   }
 
   function addStartListeners() {
@@ -49,8 +46,6 @@
     document.addEventListener("touchstart", onFirstGesture, true);
     document.addEventListener("click", onFirstGesture, true);
     document.addEventListener("keydown", onFirstKeydown, true);
-    document.addEventListener("wheel", onWheelStart, { capture: true, passive: true });
-    window.addEventListener("scroll", onScrollStart, { capture: true, passive: true });
   }
 
   function playAudio() {
@@ -58,6 +53,13 @@
       audio.pause();
       updateUi();
       return Promise.resolve(false);
+    }
+
+    if (!audio.paused && !audio.ended) {
+      hasStarted = true;
+      removeStartListeners();
+      updateUi();
+      return Promise.resolve(true);
     }
 
     audio.muted = false;
@@ -107,18 +109,6 @@
   function onFirstKeydown(e) {
     if (e.key === "Tab" || e.key === "Escape") return;
     tryStartFromInteraction(e.target);
-  }
-
-  function onWheelStart(e) {
-    if (Math.abs(e.deltaY) < 1) return;
-    tryStartFromInteraction(e.target);
-  }
-
-  function onScrollStart() {
-    if (scrollTriggered) return;
-    if ((window.scrollY || window.pageYOffset || 0) <= 0) return;
-    scrollTriggered = true;
-    tryStartFromInteraction(null);
   }
 
   audio.addEventListener("play", function () {
