@@ -4,14 +4,17 @@
   if (!audio || !btn) return;
 
   var STORAGE_KEY = "learn_html_bgm_muted";
-  audio.volume = 0.38;
-
   var mutedByUser = false;
+  var hasStarted = false;
+  var scrollTriggered = false;
+
+  audio.volume = 0.38;
+  audio.muted = false;
+  audio.playsInline = true;
+
   try {
     mutedByUser = localStorage.getItem(STORAGE_KEY) === "1";
   } catch (e) {}
-
-  var started = false;
 
   function persist() {
     try {
@@ -20,121 +23,104 @@
   }
 
   function updateUi() {
-    btn.classList.toggle("is-muted", mutedByUser);
+    var isPlaying = !audio.paused && !audio.ended;
+    btn.classList.toggle("is-muted", mutedByUser || !isPlaying);
     btn.setAttribute("aria-pressed", mutedByUser ? "false" : "true");
     btn.setAttribute("aria-label", mutedByUser ? "开启背景音乐" : "关闭背景音乐");
     btn.title = mutedByUser ? "点击开启音乐" : "点击关闭音乐";
   }
 
-  function playIfAllowed() {
+  function removeStartListeners() {
+    document.removeEventListener("pointerdown", onFirstGesture, true);
+    document.removeEventListener("touchstart", onFirstGesture, true);
+    document.removeEventListener("click", onFirstGesture, true);
+    document.removeEventListener("keydown", onFirstKeydown, true);
+    document.removeEventListener("wheel", onWheelStart, true);
+    window.removeEventListener("scroll", onScrollStart, true);
+  }
+
+  function addStartListeners() {
+    document.addEventListener("pointerdown", onFirstGesture, true);
+    document.addEventListener("touchstart", onFirstGesture, true);
+    document.addEventListener("click", onFirstGesture, true);
+    document.addEventListener("keydown", onFirstKeydown, true);
+    document.addEventListener("wheel", onWheelStart, { capture: true, passive: true });
+    window.addEventListener("scroll", onScrollStart, { capture: true, passive: true });
+  }
+
+  function playAudio() {
     if (mutedByUser) {
       audio.pause();
+      updateUi();
       return Promise.resolve(false);
     }
-    return audio
-      .play()
+
+    audio.muted = false;
+    var result = audio.play();
+    if (!result || typeof result.then !== "function") {
+      hasStarted = !audio.paused;
+      if (hasStarted) removeStartListeners();
+      updateUi();
+      return Promise.resolve(hasStarted);
+    }
+
+    return result
       .then(function () {
+        hasStarted = true;
+        removeStartListeners();
+        updateUi();
         return true;
       })
       .catch(function () {
+        updateUi();
         return false;
       });
   }
 
-  function removeGestureListeners() {
-    window.removeEventListener("scroll", onScroll);
-    document.removeEventListener("wheel", onWheel, true);
-    document.removeEventListener("pointerdown", onPointerDown, true);
-    document.removeEventListener("touchstart", onTouchStart, true);
-    document.removeEventListener("click", onClick, true);
-    document.removeEventListener("keydown", onKeyDown, true);
+  function tryStartFromInteraction(target) {
+    if (mutedByUser || hasStarted) return;
+    if (target && btn.contains(target)) return;
+    playAudio();
   }
 
-  function commitStartedIfPlaying() {
-    if (mutedByUser || !audio.paused) {
-      started = true;
-      removeGestureListeners();
-    }
-    updateUi();
+  function onFirstGesture(e) {
+    tryStartFromInteraction(e.target);
   }
 
-  function tryStartAudio() {
-    if (mutedByUser || started) return;
-    playIfAllowed().then(function (ok) {
-      if (ok && !audio.paused) {
-        started = true;
-        removeGestureListeners();
-      }
-      updateUi();
-    });
-  }
-
-  function onScroll() {
-    tryStartAudio();
-  }
-
-  function onWheel(e) {
-    if (Math.abs(e.deltaY) < 1) return;
-    tryStartAudio();
-  }
-
-  function onPointerDown(e) {
-    if (btn.contains(e.target)) return;
-    tryStartAudio();
-  }
-
-  function onTouchStart(e) {
-    if (btn.contains(e.target)) return;
-    tryStartAudio();
-  }
-
-  function onClick(e) {
-    if (btn.contains(e.target)) return;
-    tryStartAudio();
-  }
-
-  function onKeyDown(e) {
+  function onFirstKeydown(e) {
     if (e.key === "Tab" || e.key === "Escape") return;
-    tryStartAudio();
+    tryStartFromInteraction(e.target);
   }
 
-  updateUi();
-  if (mutedByUser) {
-    audio.pause();
-  } else {
-    audio.pause();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    document.addEventListener("wheel", onWheel, { capture: true, passive: true });
-    document.addEventListener("pointerdown", onPointerDown, { capture: true, passive: true });
-    document.addEventListener("touchstart", onTouchStart, { capture: true, passive: true });
-    document.addEventListener("click", onClick, { capture: true, passive: true });
-    document.addEventListener("keydown", onKeyDown, { capture: true, passive: true });
+  function onWheelStart(e) {
+    if (Math.abs(e.deltaY) < 1) return;
+    tryStartFromInteraction(e.target);
   }
+
+  function onScrollStart() {
+    if (scrollTriggered) return;
+    if ((window.scrollY || window.pageYOffset || 0) <= 0) return;
+    scrollTriggered = true;
+    tryStartFromInteraction(null);
+  }
+
+  audio.addEventListener("play", function () {
+    hasStarted = true;
+    updateUi();
+  });
+
+  audio.addEventListener("pause", function () {
+    updateUi();
+  });
 
   btn.addEventListener("click", function (e) {
+    e.preventDefault();
     e.stopPropagation();
 
-    if (mutedByUser) {
+    if (mutedByUser || audio.paused) {
       mutedByUser = false;
       persist();
-      playIfAllowed().then(function (ok) {
-        if (ok && !audio.paused) {
-          started = true;
-          removeGestureListeners();
-        }
-        updateUi();
-      });
-      return;
-    }
-
-    if (audio.paused) {
-      playIfAllowed().then(function (ok) {
-        if (ok && !audio.paused) {
-          started = true;
-          removeGestureListeners();
-        }
-        updateUi();
-      });
+      playAudio();
       return;
     }
 
@@ -143,4 +129,9 @@
     audio.pause();
     updateUi();
   });
+
+  updateUi();
+  if (!mutedByUser) {
+    addStartListeners();
+  }
 })();
