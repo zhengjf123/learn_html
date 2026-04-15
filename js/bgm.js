@@ -11,6 +11,11 @@
   audio.volume = 0.38;
   audio.muted = false;
   audio.playsInline = true;
+  audio.setAttribute("playsinline", "true");
+  audio.setAttribute("webkit-playsinline", "true");
+  audio.setAttribute("x5-playsinline", "true");
+  audio.setAttribute("x5-audio-player-type", "h5-page");
+  audio.load();
 
   try {
     mutedByUser = localStorage.getItem(STORAGE_KEY) === "1";
@@ -56,7 +61,18 @@
     }
 
     audio.muted = false;
-    var result = audio.play();
+    if (audio.readyState === 0) {
+      audio.load();
+    }
+
+    var result;
+    try {
+      result = audio.play();
+    } catch (err) {
+      updateUi();
+      return Promise.resolve(false);
+    }
+
     if (!result || typeof result.then !== "function") {
       hasStarted = !audio.paused;
       if (hasStarted) removeStartListeners();
@@ -71,7 +87,8 @@
         updateUi();
         return true;
       })
-      .catch(function () {
+      .catch(function (err) {
+        console.warn("BGM play failed:", err && err.name ? err.name : err);
         updateUi();
         return false;
       });
@@ -110,6 +127,11 @@
   });
 
   audio.addEventListener("pause", function () {
+    updateUi();
+  });
+
+  audio.addEventListener("error", function () {
+    console.warn("BGM audio element error", audio.error ? audio.error.code : "unknown");
     updateUi();
   });
 
