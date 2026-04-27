@@ -128,6 +128,12 @@
       visibleLayer = nextLayer;
       idx = newIdx;
       captionEl.textContent = item.caption || "";
+      if (frameEl) {
+        frameEl.classList.remove("is-flash");
+        // 触发一次重排，保证连续切换也能闪一下
+        void frameEl.offsetWidth;
+        frameEl.classList.add("is-flash");
+      }
       updateFilmstrip();
       scheduleFitFrameAfterTransition();
       restartProgress();

@@ -235,37 +235,30 @@
 
   function onResize() {
     resize();
-    initStars(W < 600 ? 55 : 95);
+    // 电影感：更少、更暗的星点，不抢主体
+    initStars(W < 600 ? 40 : 70);
   }
 
   if (!reduce) {
     onResize();
     window.addEventListener("resize", onResize);
 
-    spawnConfettiFall(W < 600 ? 42 : 72);
-    setTimeout(function () {
-      spawnConfettiFall(W < 600 ? 28 : 48);
-    }, 1600);
-    burstAt(W * 0.5, H * 0.28, W < 600 ? 55 : 85);
-
+    // 默认氛围：只保留少量花瓣漂移（更克制）
     setInterval(function () {
-      if (Math.random() > 0.55) spawnHeart();
-    }, 900);
-    setInterval(function () {
-      if (Math.random() > 0.4) spawnPetal();
-    }, 500);
-
-    setInterval(function () {
-      burstAt(Math.random() * W * 0.7 + W * 0.15, Math.random() * H * 0.35 + H * 0.08, W < 600 ? 28 : 42);
-    }, 5200);
+      if (Math.random() > 0.55) spawnPetal();
+    }, 1100);
 
     requestAnimationFrame(tick);
 
+    var lastUserBurstAt = 0;
     document.addEventListener(
       "click",
       function (e) {
         if (e.target.closest && (e.target.closest("a") || e.target.closest(".no-fx-burst"))) return;
-        burstAt(e.clientX, e.clientY, W < 600 ? 48 : 72);
+        var now = Date.now();
+        if (now - lastUserBurstAt < 650) return;
+        lastUserBurstAt = now;
+        burstAt(e.clientX, e.clientY, W < 600 ? 34 : 54);
       },
       { passive: true }
     );
