@@ -83,6 +83,55 @@
     }
   }
 
+  var fireworks = [];
+  var fireworkParticles = [];
+
+  function spawnFirework() {
+    fireworks.push({
+      x: Math.random() * W,
+      y: H + 20,
+      targetY: H * (0.2 + Math.random() * 0.3),
+      speed: 8 + Math.random() * 6,
+      hue: Math.random() * 360,
+      alive: true
+    });
+  }
+
+  function explodeFirework(x, y, hue) {
+    var particleCount = 60 + Math.floor(Math.random() * 40);
+    for (var i = 0; i < particleCount; i++) {
+      var ang = (i / particleCount) * Math.PI * 2;
+      var sp = 2 + Math.random() * 8;
+      var speedVariance = 0.8 + Math.random() * 0.4;
+      fireworkParticles.push({
+        x: x,
+        y: y,
+        vx: Math.cos(ang) * sp * speedVariance,
+        vy: Math.sin(ang) * sp * speedVariance - 1,
+        life: 1,
+        decay: 0.012 + Math.random() * 0.008,
+        size: 2 + Math.random() * 4,
+        hue: hue + (Math.random() * 40 - 20),
+        sparkle: Math.random() > 0.6
+      });
+    }
+    for (var j = 0; j < 20; j++) {
+      var a = Math.random() * Math.PI * 2;
+      var s = 1 + Math.random() * 3;
+      fireworkParticles.push({
+        x: x,
+        y: y,
+        vx: Math.cos(a) * s,
+        vy: Math.sin(a) * s - 2,
+        life: 1,
+        decay: 0.02 + Math.random() * 0.01,
+        size: 1 + Math.random() * 2,
+        hue: hue + (Math.random() * 60 - 30),
+        sparkle: true
+      });
+    }
+  }
+
   function burstAt(x, y, count) {
     for (var i = 0; i < count; i++) {
       var ang = Math.random() * Math.PI * 2;
@@ -99,25 +148,10 @@
         vr: -0.35 + Math.random() * 0.7,
         c: colors[(Math.random() * colors.length) | 0],
         g: 0.12 + Math.random() * 0.08,
+        sparkle: Math.random() > 0.5
       });
     }
-    for (var j = 0; j < Math.floor(count * 0.35); j++) {
-      var a = Math.random() * Math.PI * 2;
-      var s = 2 + Math.random() * 5;
-      bursts.push({
-        x: x,
-        y: y,
-        vx: Math.cos(a) * s,
-        vy: Math.sin(a) * s - 3,
-        life: 1,
-        heart: true,
-        s: 0.25 + Math.random() * 0.35,
-        rot: Math.random() * Math.PI * 2,
-        vr: -0.1 + Math.random() * 0.2,
-        c: "#ff6b9d",
-        g: 0.06,
-      });
-    }
+    explodeFirework(x, y, Math.random() * 360);
   }
 
   function fillHeart(x, y, scale, rotation, color, alpha) {
@@ -242,9 +276,71 @@
         ctx.globalAlpha = Math.max(0, b.life);
         ctx.fillStyle = b.c;
         ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h);
+        if (b.sparkle && b.life > 0.5) {
+          ctx.fillStyle = "rgba(255,255,255," + (b.life - 0.5) * 0.8 + ")";
+          ctx.beginPath();
+          ctx.arc(0, 0, b.w * 0.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
         ctx.restore();
       }
       if (b.life <= 0) bursts.splice(bi, 1);
+    }
+
+    // 绘制 fireworks
+    for (var fi = fireworks.length - 1; fi >= 0; fi--) {
+      var fw = fireworks[fi];
+      if (fw.alive) {
+        fw.y -= fw.speed;
+        if (fw.y <= fw.targetY) {
+          explodeFirework(fw.x, fw.y, fw.hue);
+          fireworks.splice(fi, 1);
+        } else {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(fw.x, fw.y, 3, 0, Math.PI * 2);
+          ctx.fillStyle = "hsl(" + fw.hue + ", 100%, 70%)";
+          ctx.fill();
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = "hsl(" + fw.hue + ", 100%, 60%)";
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+    }
+
+    // 绘制 fireworkParticles
+    for (var fpi = fireworkParticles.length - 1; fpi >= 0; fpi--) {
+      var fp = fireworkParticles[fpi];
+      fp.x += fp.vx;
+      fp.y += fp.vy;
+      fp.vy += 0.05;
+      fp.vx *= 0.98;
+      fp.vy *= 0.98;
+      fp.life -= fp.decay;
+      
+      if (fp.life <= 0) {
+        fireworkParticles.splice(fpi, 1);
+        continue;
+      }
+      
+      ctx.save();
+      ctx.globalAlpha = fp.life;
+      ctx.fillStyle = "hsl(" + fp.hue + ", 100%, " + (50 + fp.life * 30) + "%)";
+      ctx.shadowBlur = fp.sparkle ? 10 : 5;
+      ctx.shadowColor = "hsl(" + fp.hue + ", 100%, 60%)";
+      ctx.beginPath();
+      ctx.arc(fp.x, fp.y, fp.size * fp.life, 0, Math.PI * 2);
+      ctx.fill();
+      
+      if (fp.sparkle && fp.life > 0.7) {
+        ctx.globalAlpha = (fp.life - 0.7) * 2;
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        ctx.arc(fp.x, fp.y, fp.size * fp.life * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
     }
 
     requestAnimationFrame(tick);
@@ -264,6 +360,7 @@
     setInterval(function () {
       if (Math.random() > 0.4) spawnPetal();
       if (Math.random() > 0.7) spawnHeart();
+      if (Math.random() > 0.6) spawnFirework();
     }, 800);
 
     // 定时触发小型礼花效果
@@ -274,6 +371,15 @@
         burstAt(x, y, W < 600 ? 20 : 30);
       }
     }, 5000);
+
+    // 电脑端自动烟花
+    if (W >= 900) {
+      setInterval(function () {
+        if (Math.random() > 0.5) {
+          spawnFirework();
+        }
+      }, 2000);
+    }
 
     requestAnimationFrame(tick);
 
