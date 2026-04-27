@@ -147,6 +147,19 @@
     t += 0.016;
     ctx.clearRect(0, 0, W, H);
 
+    // 优化：限制粒子数量，避免过多绘制
+    var maxParticles = W < 600 ? 100 : 200;
+    var totalParticles = hearts.length + petals.length + confetti.length + bursts.length;
+    
+    if (totalParticles > maxParticles) {
+      // 移除最旧的粒子
+      if (hearts.length > 0) hearts.shift();
+      if (petals.length > 0) petals.shift();
+      if (confetti.length > 0) confetti.shift();
+      if (bursts.length > 0) bursts.shift();
+    }
+
+    // 绘制星星
     for (var si = 0; si < stars.length; si++) {
       var st = stars[si];
       var tw = 0.35 + Math.sin(t * st.sp + st.tw) * 0.65;
@@ -156,6 +169,7 @@
       ctx.fill();
     }
 
+    // 绘制 hearts
     for (var hi = hearts.length - 1; hi >= 0; hi--) {
       var h = hearts[hi];
       h.x += h.vx;
@@ -165,6 +179,7 @@
       if (h.y < -60) hearts.splice(hi, 1);
     }
 
+    // 绘制 petals
     for (var pi = petals.length - 1; pi >= 0; pi--) {
       var pe = petals[pi];
       pe.x += pe.vx + Math.sin(t + pi) * 0.15;
@@ -182,6 +197,7 @@
       if (pe.y > H + 30) petals.splice(pi, 1);
     }
 
+    // 绘制 confetti
     for (var ci = confetti.length - 1; ci >= 0; ci--) {
       var c = confetti[ci];
       c.x += c.vx;
@@ -209,6 +225,7 @@
       }
     }
 
+    // 绘制 bursts
     for (var bi = bursts.length - 1; bi >= 0; bi--) {
       var b = bursts[bi];
       b.x += b.vx;
@@ -243,10 +260,20 @@
     onResize();
     window.addEventListener("resize", onResize);
 
-    // 默认氛围：只保留少量花瓣漂移（更克制）
+    // 增强氛围效果
     setInterval(function () {
-      if (Math.random() > 0.55) spawnPetal();
-    }, 1100);
+      if (Math.random() > 0.4) spawnPetal();
+      if (Math.random() > 0.7) spawnHeart();
+    }, 800);
+
+    // 定时触发小型礼花效果
+    setInterval(function () {
+      if (Math.random() > 0.7) {
+        var x = Math.random() * W;
+        var y = Math.random() * H * 0.7;
+        burstAt(x, y, W < 600 ? 20 : 30);
+      }
+    }, 5000);
 
     requestAnimationFrame(tick);
 
