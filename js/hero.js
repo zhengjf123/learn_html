@@ -63,12 +63,35 @@
   window.addEventListener("wheel", function (e) {
     if (isScrolling) return;
     
-    if (e.deltaY > 0) {
+    if (e.deltaY > 50) {
       showPage(currentPage + 1);
-    } else {
+    } else if (e.deltaY < -50) {
       showPage(currentPage - 1);
     }
   }, { passive: true });
+
+  var touchStartY = 0;
+  var touchEndY = 0;
+  
+  document.addEventListener("touchstart", function (e) {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  
+  document.addEventListener("touchmove", function (e) {
+    if (isScrolling) return;
+    touchEndY = e.touches[0].clientY;
+  }, { passive: true });
+  
+  document.addEventListener("touchend", function (e) {
+    if (isScrolling) return;
+    
+    var diff = touchStartY - touchEndY;
+    if (diff > 50) {
+      showPage(currentPage + 1);
+    } else if (diff < -50) {
+      showPage(currentPage - 1);
+    }
+  });
 
   window.addEventListener("keydown", function (e) {
     if (e.key === "ArrowDown" || e.key === "PageDown") {

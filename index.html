@@ -49,6 +49,9 @@
               <h1 class="cover-title reveal">生日快乐</h1>
               <p class="cover-name reveal">珂微姐姐</p>
             </div>
+            <button type="button" class="bgm-play-btn no-fx-burst reveal" id="bgm-btn" aria-pressed="false" aria-label="播放背景音乐">
+              点击播放
+            </button>
             <div class="scroll-indicator" id="scroll-indicator">
               <span class="scroll-text">向下滑动</span>
               <div class="scroll-arrow">↓</div>
@@ -114,6 +117,11 @@
               </div>
               <div class="filmstrip" id="filmstrip"></div>
             </div>
+            <div class="gallery-empty" id="gallery-empty" hidden>
+              <p><strong>还没有登记照片</strong></p>
+              <p>请将图片放入 <code>photos/</code> 文件夹，并编辑 <code>photos/manifest.json</code> 中的 <code>photos</code> 列表。</p>
+              <p>完整步骤见仓库根目录的 <code>PHOTOS_USAGE.txt</code>。</p>
+            </div>
           </div>
         </div>
       </section>
@@ -159,10 +167,6 @@
                 <span class="wish-text">永远年轻，永远热泪盈眶</span>
                 <span class="star">★</span>
               </div>
-              <button type="button" class="bgm-play-btn no-fx-burst reveal" id="bgm-btn" aria-pressed="false" aria-label="播放背景音乐">
-                点击播放
-              </button>
-              <p class="ending-hint reveal">点击播放音乐，感受这份心意</p>
             </div>
           </div>
         </div>

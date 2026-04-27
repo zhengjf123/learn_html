@@ -5,14 +5,17 @@
 
   audio.volume = 0.38;
   audio.muted = false;
+  audio.loop = true;
   audio.playsInline = true;
   audio.setAttribute("playsinline", "true");
   audio.setAttribute("webkit-playsinline", "true");
   audio.setAttribute("x5-playsinline", "true");
   audio.setAttribute("x5-audio-player-type", "h5-page");
+  audio.setAttribute("preload", "auto");
 
   var starting = false;
   var ignoreClickUntil = 0;
+  var isWeChat = /MicroMessenger/i.test(navigator.userAgent);
 
   function updateUi() {
     var playing = !audio.paused && !audio.ended;
@@ -36,7 +39,8 @@
           starting = false;
           updateUi();
         },
-        function () {
+        function (error) {
+          console.warn("播放失败:", error);
           starting = false;
           updateUi();
         }
@@ -46,6 +50,17 @@
       updateUi();
     }
   }
+
+  function handleUserInteraction() {
+    if (!audio.paused) return;
+    // 尝试预加载
+    audio.load();
+  }
+
+  // 监听用户交互事件，解决微信浏览器的自动播放限制
+  document.addEventListener('touchstart', handleUserInteraction, { once: true, passive: true });
+  document.addEventListener('click', handleUserInteraction, { once: true, passive: true });
+  document.addEventListener('keydown', handleUserInteraction, { once: true, passive: true });
 
   btn.addEventListener(
     "pointerdown",
@@ -95,6 +110,12 @@
     console.warn("BGM audio error", audio.error ? audio.error.code : "unknown");
     starting = false;
     updateUi();
+  });
+  audio.addEventListener("loadedmetadata", function () {
+    console.log("音频加载成功");
+  });
+  audio.addEventListener("canplay", function () {
+    console.log("音频可以播放");
   });
 
   updateUi();
