@@ -32,130 +32,150 @@
       <div class="desktop-cinema__letterbox desktop-cinema__letterbox--bottom"></div>
     </div>
 
-    <audio
-      id="bgm-audio"
-      src="audio/bgm.mp3"
-      loop
-      playsinline
-      webkit-playsinline="true"
-      x5-playsinline="true"
-      x5-audio-player-type="h5-page"
-      preload="auto"
-    ></audio>
+    <audio id="bgm-audio" src="audio/bgm.mp3" loop playsinline webkit-playsinline="true" x5-playsinline="true" x5-audio-player-type="h5-page" preload="auto"></audio>
 
-    <header class="hero-screen">
-      <div class="wrap" id="hero-parallax">
-        <div class="balloons" aria-hidden="true">
-          <div class="balloon"></div>
-          <div class="balloon"></div>
-          <div class="balloon"></div>
-        </div>
-
-        <div class="card" id="card">
-          <div class="sparkles" aria-hidden="true">
-            <span></span><span></span><span></span><span></span><span></span><span></span>
-          </div>
-          <div class="countdown reveal r1" id="countdown">
-          <p class="countdown-label">距离生日</p>
-          <div class="countdown-time">
-            <span class="countdown-item">
-              <span class="countdown-number" id="days">00</span>
-              <span class="countdown-unit">天</span>
-            </span>
-            <span class="countdown-separator">:</span>
-            <span class="countdown-item">
-              <span class="countdown-number" id="hours">00</span>
-              <span class="countdown-unit">时</span>
-            </span>
-            <span class="countdown-separator">:</span>
-            <span class="countdown-item">
-              <span class="countdown-number" id="minutes">00</span>
-              <span class="countdown-unit">分</span>
-            </span>
-            <span class="countdown-separator">:</span>
-            <span class="countdown-item">
-              <span class="countdown-number" id="seconds">00</span>
-              <span class="countdown-unit">秒</span>
-            </span>
-          </div>
-        </div>
-        <p class="eyebrow reveal r2">HAPPY BIRTHDAY</p>
-        <p class="hero-name reveal r3">骆珂微</p>
-        <h1 class="reveal r4">生日快乐</h1>
-        <p class="sub reveal r5">姐姐，愿你被温柔环绕，笑容比烛光更亮。</p>
-
-          <p class="wish-lede reveal r6">今天，只管做最耀眼的主角。</p>
-          <details class="wish-details reveal r7" id="wish-details">
-            <summary class="wish-summary">展开祝福</summary>
-            <p class="wish">
-              骆珂微，新的一岁里，健康平安常伴，心想的事慢慢都实现；累了就休息，开心就大笑。今天只管做最耀眼的主角，生日这天，全世界都该围着你转一圈。
-            </p>
-          </details>
-
-          <p class="sign reveal r8">—— 爱你的家人</p>
-          <div class="cake" aria-hidden="true">🎂</div>
-          <button
-            type="button"
-            class="bgm-play-btn no-fx-burst"
-            id="bgm-btn"
-            aria-pressed="false"
-            aria-label="播放背景音乐"
-          >
-            点击播放
-          </button>
-        </div>
-
-        <p class="hint-tap">点击空白处 · 礼花绽放</p>
-        <a class="to-gallery" href="#gallery">下滑开启 · 时光放映 ✦</a>
-      </div>
-    </header>
-
-    <section class="gallery-section no-fx-burst" id="gallery" aria-labelledby="gallery-title">
-      <div class="gallery-inner">
-        <header class="gallery-header">
-          <h2 id="gallery-title">时光放映</h2>
-        </header>
-
-        <div
-          class="slideshow no-fx-burst"
-          id="slideshow"
-          tabindex="0"
-          role="region"
-          aria-roledescription="carousel"
-          aria-label="骆珂微的照片放映"
-        >
-          <div class="slide-frame">
-            <div class="slide-layer is-visible">
-              <img alt="" decoding="async" />
+    <div class="pages-container" id="pages-container">
+      <section class="page page-cover active" data-page="cover">
+        <div class="page-content">
+          <div class="cover-scene">
+            <div class="cover-stars" id="cover-stars"></div>
+            <div class="balloons" aria-hidden="true">
+              <div class="balloon"></div>
+              <div class="balloon"></div>
+              <div class="balloon"></div>
             </div>
-            <div class="slide-layer">
-              <img alt="" decoding="async" />
+            <div class="cover-text">
+              <p class="cover-eyebrow reveal">HAPPY BIRTHDAY</p>
+              <h1 class="cover-title reveal">生日快乐</h1>
+              <p class="cover-name reveal">珂微姐姐</p>
             </div>
-            <div class="slide-shine" aria-hidden="true"></div>
+            <div class="scroll-indicator" id="scroll-indicator">
+              <span class="scroll-text">向下滑动</span>
+              <div class="scroll-arrow">↓</div>
+            </div>
           </div>
-          <p class="slide-caption"></p>
-          <div class="slide-toolbar">
-            <button type="button" class="btn-prev" aria-label="上一张">‹</button>
-            <button type="button" class="btn-play" aria-label="暂停自动放映">⏸</button>
-            <button type="button" class="btn-next" aria-label="下一张">›</button>
-            <button type="button" class="btn-fullscreen">全屏放映</button>
-          </div>
-          <div class="slide-progress" aria-hidden="true">
-            <span class="slide-progress-fill"></span>
-          </div>
-          <div class="filmstrip" id="filmstrip"></div>
         </div>
+      </section>
 
-        <div class="gallery-empty" id="gallery-empty" hidden>
-          <p><strong>还没有登记照片</strong></p>
-          <p>
-            请将图片放入 <code>photos/</code> 文件夹，并编辑 <code>photos/manifest.json</code> 中的
-            <code>photos</code> 列表。
-          </p>
-          <p>完整步骤见仓库根目录的 <code>PHOTOS_USAGE.txt</code>。</p>
+      <section class="page page-meet" data-page="meet">
+        <div class="page-content">
+          <div class="meet-scene">
+            <div class="meet-decoration">
+              <div class="heart-float h1">♥</div>
+              <div class="heart-float h2">♥</div>
+              <div class="heart-float h3">♥</div>
+            </div>
+            <div class="meet-content">
+              <h2 class="page-title reveal">初次相遇</h2>
+              <p class="meet-text reveal">
+                那时的我们，或许从未想过，<br>
+                会成为彼此生命中如此特别的存在。<br><br>
+                从陌生到熟悉，<br>
+                从路人到可以肆无忌惮开玩笑的朋友。<br><br>
+                这份缘分，值得珍藏。
+              </p>
+              <div class="meet-illustration reveal">
+                <div class="illustration-frame">
+                  <span class="illustration-emoji">✨</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section class="page page-gallery" data-page="gallery">
+        <div class="page-content">
+          <div class="gallery-scene">
+            <header class="gallery-header">
+              <h2 class="page-title reveal">时光剪影</h2>
+              <p class="gallery-subtitle reveal">那些一起走过的日子</p>
+            </header>
+
+            <div class="slideshow" id="slideshow" tabindex="0" role="region" aria-roledescription="carousel" aria-label="骆珂微的照片放映">
+              <div class="slide-frame">
+                <div class="slide-layer is-visible">
+                  <img alt="" decoding="async" />
+                </div>
+                <div class="slide-layer">
+                  <img alt="" decoding="async" />
+                </div>
+                <div class="slide-shine" aria-hidden="true"></div>
+              </div>
+              <p class="slide-caption"></p>
+              <div class="slide-toolbar">
+                <button type="button" class="btn-prev" aria-label="上一张">‹</button>
+                <button type="button" class="btn-play" aria-label="暂停自动放映">⏸</button>
+                <button type="button" class="btn-next" aria-label="下一张">›</button>
+                <button type="button" class="btn-fullscreen">全屏放映</button>
+              </div>
+              <div class="slide-progress" aria-hidden="true">
+                <span class="slide-progress-fill"></span>
+              </div>
+              <div class="filmstrip" id="filmstrip"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page page-wishes" data-page="wishes">
+        <div class="page-content">
+          <div class="wishes-scene">
+            <div class="wishes-particles" id="wishes-particles"></div>
+            <div class="wishes-content">
+              <div class="wishes-header">
+                <h2 class="page-title reveal">生日快乐</h2>
+                <div class="cake-icon reveal">🎂</div>
+              </div>
+              <div class="wishes-card reveal" id="wishes-card">
+                <div class="sparkles" aria-hidden="true">
+                  <span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <p class="wishes-main">珂微姐姐，新的一岁，愿你眼里有光，心中有梦。</p>
+                <div class="wishes-details">
+                  <p>愿你被温柔环绕，笑容比烛光更亮。</p>
+                  <p>心想的事慢慢都实现，开心就大笑，累了就休息。</p>
+                  <p>今天，只管做最耀眼的主角。</p>
+                </div>
+                <p class="sign">—— 永远支持你的朋友</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page page-ending" data-page="ending">
+        <div class="page-content">
+          <div class="ending-scene">
+            <div class="ending-stars" id="ending-stars"></div>
+            <div class="ending-content">
+              <h2 class="ending-title reveal">再见</h2>
+              <p class="ending-text reveal">
+                愿你的每一天都如今天般灿烂，<br>
+                愿你的每一个梦想都能绽放。
+              </p>
+              <div class="ending-wish reveal">
+                <span class="star">★</span>
+                <span class="wish-text">永远年轻，永远热泪盈眶</span>
+                <span class="star">★</span>
+              </div>
+              <button type="button" class="bgm-play-btn no-fx-burst reveal" id="bgm-btn" aria-pressed="false" aria-label="播放背景音乐">
+                点击播放
+              </button>
+              <p class="ending-hint reveal">点击播放音乐，感受这份心意</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <nav class="page-nav" id="page-nav">
+      <button type="button" class="nav-dot active" data-page="cover" aria-label="封面"></button>
+      <button type="button" class="nav-dot" data-page="meet" aria-label="相识"></button>
+      <button type="button" class="nav-dot" data-page="gallery" aria-label="时光"></button>
+      <button type="button" class="nav-dot" data-page="wishes" aria-label="祝福"></button>
+      <button type="button" class="nav-dot" data-page="ending" aria-label="结尾"></button>
+    </nav>
 
     <script src="js/hero.js"></script>
     <script src="js/bgm.js"></script>
